@@ -1,3 +1,18 @@
+/*
+ * Bengala Inteligente - definições de pinos e funções
+ *
+ * Ligações no Arduino Uno:
+ *
+ *   Sensor ultrassônico HC-SR04
+ *     VCC  -> 5V
+ *     GND  -> GND
+ *     TRIG -> D9   (saída: dispara o pulso ultrassônico)
+ *     ECHO -> D10  (entrada: recebe o eco)
+ *
+ *   Buzzer ativo 5 V
+ *     (+)  -> D8   (saída: liga e desliga o som)
+ *     (-)  -> GND
+ */
 #ifndef BENGALA_H
 #define BENGALA_H
 

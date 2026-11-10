@@ -1,6 +1,14 @@
+/*
+ * Bengala Inteligente - leitura do sensor, filtro e alerta sonoro
+ *
+ * - lerDistanciaCM(): mede a distância com o HC-SR04 e aplica a média móvel.
+ * - atualizarAlertaSonoro(): define o ritmo do buzzer conforme a distância.
+ *
+ * Os pinos estão definidos em Bengala.h.
+ */
 #include "Bengala.h"
 
-// Configuração do Filtro de Média Móvel (Tratamento de Incertezas exigido pelo trabalho)
+// Filtro de média móvel (5 leituras) para suavizar o ruído do HC-SR04
 const int NUM_LEITURAS = 5;
 int leituras[NUM_LEITURAS];
 int indiceLeitura = 0;
@@ -12,7 +20,7 @@ void setupBengala() {
     pinMode(PIN_BUZZER, OUTPUT);
     digitalWrite(PIN_TRIG, LOW);
 
-    // Inicializa o array de leituras com zero
+    // Inicia a janela com zeros: nas primeiras leituras a média sai subestimada, até a janela encher
     for (int i = 0; i < NUM_LEITURAS; i++) {
         leituras[i] = 0;
     }
@@ -24,11 +32,12 @@ int lerDistanciaCM() {
     delayMicroseconds(10);
     digitalWrite(PIN_TRIG, LOW);
 
-    // Medição da resposta do eco (com timeout de 30ms)
+    // Mede o tempo do eco em µs; timeout de 30 ms (cerca de 5 m, acima do alcance do sensor)
     long duracao = pulseIn(PIN_ECHO, HIGH, 30000); 
+    // Sem eco: 999 cm (sem obstáculo). Senão: distância = tempo × velocidade do som (0,034 cm/µs) ÷ 2, pois o som vai e volta
     int distanciaAtual = (duracao == 0) ? 999 : static_cast<int>(duracao * 0.034 / 2);
 
-    // Aplicação do Filtro de Média Móvel para eliminar ruídos do sensor
+    // Remove da soma a leitura mais antiga, coloca a nova no lugar e avança o índice (buffer circular)
     somaLeituras = somaLeituras - leituras[indiceLeitura];
     leituras[indiceLeitura] = distanciaAtual;
     somaLeituras = somaLeituras + leituras[indiceLeitura];
@@ -44,7 +53,7 @@ void atualizarAlertaSonoro(int distancia) {
     unsigned long tempoAtual = millis();
     unsigned long intervalo = 0; 
 
-    // Define os intervalos de bip com base na distância filtrada
+    // intervalo = tempo (ms) entre ligar e desligar o buzzer: quanto menor, mais rápido o bipe
     if (distancia > 0 && distancia <= 30) {
         intervalo = 80;   // Muito perto: bipes rápidos
     } else if (distancia > 30 && distancia <= 80) {
@@ -57,7 +66,7 @@ void atualizarAlertaSonoro(int distancia) {
         return;
     }
 
-    // Temporizador assíncrono seguro (sem travar com delay)
+    // Alterna o buzzer usando millis() (sem delay), para não travar a leitura do sensor
     if (tempoAtual - ultimaTrocaState >= static_cast<unsigned long>(intervalo)) {
         ultimaTrocaState = tempoAtual;
         buzzerLigado = !buzzerLigado;
