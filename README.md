@@ -13,7 +13,8 @@ Fonte: https://agenciadenoticias.ibge.gov.br/agencia-sala-de-imprensa/31445-pns-
 
 **Onde acontece:** em calçadas, ruas, transporte, campus e ambientes internos, em qualquer deslocamento a pé.
 
-**Por que importa:** a bengala longa detecta o que ela toca, principalmente no nível do chão. Obstáculos fora desse alcance (placas, galhos, toldos, portas abertas, objetos na altura do tronco ou da cabeça) podem passar despercebidos e causar batidas, quedas e insegurança, o que reduz a autonomia de quem se desloca sozinho.
+**Por que importa:** a bengala longa detecta o que ela toca, principalmente no nível do chão. Obstáculos fora desse alcance (placas, galhos, toldos, portas abertas, objetos na altura do tronco ou da cabeça) podem passar despercebidos e causar batidas, quedas e insegurança, o que reduz a autonomia de quem se desloca sozinho. Em uma pesquisa com 307 pessoas cegas ou legalmente cegas (a maioria nos EUA), 13% relataram bater a cabeça em obstáculos pelo menos uma vez por mês, e o uso de cão-guia não protegeu mais do que o da bengala longa contra esses acidentes.  
+Fonte: MANDUCHI, R.; KURNIAWAN, S. Mobility-related accidents experienced by people with visual impairment. Insight: Research and Practice in Visual Impairment and Blindness, v. 4, n. 2, 2011. Disponível em: https://users.soe.ucsc.edu/~manduchi/papers/MobilityAccidents.pdf.
 
 **Como é tratado hoje:** bengala longa, cão-guia e acompanhante. Existem dispositivos eletrônicos específicos, mas nem sempre são acessíveis.
 
@@ -32,7 +33,7 @@ Fonte: https://agenciadenoticias.ibge.gov.br/agencia-sala-de-imprensa/31445-pns-
 | Jumpers macho-macho e macho-fêmea | Ligações entre sensor, protoboard e Arduino |
 | Caixa | Aloja o circuito, fixada na bengala |
 | Abraçadeiras | Fixação da protoboard na caixa |
-| Notebook (cabo USB A-B, 5 V) | Alimentação do Arduino |
+| Pilhas | Alimentação própria do Arduino |
 
 ---
 
@@ -67,7 +68,7 @@ Fonte: https://agenciadenoticias.ibge.gov.br/agencia-sala-de-imprensa/31445-pns-
 
 Os pinos estão definidos em `src/Bengala.h`.
 
-**Segurança:** somente baixa tensão (5 V), com terra comum. Nenhuma parte do projeto usa tensão de rede.
+**Segurança:** somente baixa tensão (alimentação por pilhas; o circuito opera em 5 V), com terra comum. Nenhuma parte do projeto usa tensão de rede.
 
 ---
 
@@ -80,15 +81,13 @@ Os pinos estão definidos em `src/Bengala.h`.
    ```bash
    git clone https://github.com/fssantos-beep/Bengala-inteligente.git
    ```
-3. Monte o circuito conforme a seção 3 e conecte o Arduino Uno por USB.
-4. Clique em **Upload** do PlatformIO (ou rode `pio run -t upload`).
+3. Monte o circuito conforme a seção 3 e conecte o Arduino Uno ao computador por USB (só para gravar o código).
+4. Clique em **Upload** do PlatformIO.
 5. Para acompanhar as leituras, abra o monitor serial em **115200 baud** (`pio device monitor`). Aparecem linhas como `Distancia: 42 cm`.
-
-Na Arduino IDE: crie um sketch, copie `src/main.cpp` para o `.ino`, coloque `Bengala.h` e `Bengala.cpp` na mesma pasta e selecione a placa **Arduino Uno**.
 
 ### Usar
 
-Ligue a bengala (USB, power bank ou bateria de 7 a 12 V no conector de alimentação do Arduino) e aponte o sensor para a frente. O som muda conforme a distância:
+Ligue a bengala com as pilhas (não precisa do notebook) e aponte o sensor para a frente. O som muda conforme a distância:
 
 | Distância do obstáculo | Som |
 |---|---|
